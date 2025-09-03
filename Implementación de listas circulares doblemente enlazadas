@@ -1,0 +1,230 @@
+#include <iostream>
+using namespace std;
+
+struct Nodo {
+    int dato;
+    Nodo* siguiente;
+    Nodo* anterior;
+    
+    Nodo(int valor) {
+        dato = valor;
+        siguiente = NULL;
+        anterior = NULL;
+    }
+};
+
+class ListaCircularDoble {
+private:
+    Nodo* cabeza;
+    
+public:
+    ListaCircularDoble() {
+        cabeza = NULL;
+    }
+    
+    void insertar(int valor) {
+        Nodo* nuevo = new Nodo(valor);
+        
+        if (cabeza == NULL) {
+            cabeza = nuevo;
+            cabeza->siguiente = cabeza;
+            cabeza->anterior = cabeza;
+        } else {
+            Nodo* ultimo = cabeza->anterior;
+            
+            ultimo->siguiente = nuevo;
+            nuevo->anterior = ultimo;
+            nuevo->siguiente = cabeza;
+            cabeza->anterior = nuevo;
+        }
+        cout << "Dato " << valor << " insertado correctamente.\n";
+    }
+    
+    void imprimir() {
+        if (cabeza == NULL) {
+            cout << "La lista esta vacia.\n";
+            return;
+        }
+        
+        cout << "Datos en la lista: ";
+        Nodo* actual = cabeza;
+        
+        do {
+            cout << actual->dato << " ";
+            actual = actual->siguiente;
+        } while (actual != cabeza);
+        
+        cout << endl;
+    }
+    
+    void imprimirSiguiente(int valor) {
+        if (cabeza == NULL) {
+            cout << "La lista esta vacia.\n";
+            return;
+        }
+        
+        Nodo* actual = cabeza;
+        bool encontrado = false;
+        
+        do {
+            if (actual->dato == valor) {
+                encontrado = true;
+                cout << "El elemento siguiente de " << valor << " es: " << actual->siguiente->dato << endl;
+                return;
+            }
+            actual = actual->siguiente;
+        } while (actual != cabeza);
+        
+        if (!encontrado) {
+            cout << "El valor " << valor << " no existe en la lista.\n";
+        }
+    }
+    
+    void imprimirAnterior(int valor) {
+        if (cabeza == NULL) {
+            cout << "La lista esta vacia.\n";
+            return;
+        }
+        
+        Nodo* actual = cabeza;
+        bool encontrado = false;
+        
+        do {
+            if (actual->dato == valor) {
+                encontrado = true;
+                cout << "El elemento anterior de " << valor << " es: " << actual->anterior->dato << endl;
+                return;
+            }
+            actual = actual->siguiente;
+        } while (actual != cabeza);
+        
+        if (!encontrado) {
+            cout << "El valor " << valor << " no existe en la lista.\n";
+        }
+    }
+    
+    void eliminar(int valor) {
+        if (cabeza == NULL) {
+            cout << "La lista esta vacia.\n";
+            return;
+        }
+        
+        Nodo* actual = cabeza;
+        bool encontrado = false;
+        
+        do {
+            if (actual->dato == valor) {
+                encontrado = true;
+                
+                if (actual == cabeza && actual->siguiente == cabeza) {
+                    cabeza = NULL;
+                } else {
+                    actual->anterior->siguiente = actual->siguiente;
+                    actual->siguiente->anterior = actual->anterior;
+                    
+                    if (actual == cabeza) {
+                        cabeza = actual->siguiente;
+                    }
+                }
+                
+                delete actual;
+                cout << "Dato " << valor << " eliminado correctamente.\n";
+                return;
+            }
+            actual = actual->siguiente;
+        } while (actual != cabeza);
+        
+        if (!encontrado) {
+            cout << "El valor " << valor << " no existe en la lista.\n";
+        }
+    }
+    
+    void buscar(int valor) {
+        if (cabeza == NULL) {
+            cout << "La lista esta vacia.\n";
+            return;
+        }
+        
+        Nodo* actual = cabeza;
+        int posicion = 1;
+        bool encontrado = false;
+        
+        do {
+            if (actual->dato == valor) {
+                encontrado = true;
+                cout << "El valor " << valor << " fue encontrado en la posicion " << posicion << ".\n";
+                return;
+            }
+            actual = actual->siguiente;
+            posicion++;
+        } while (actual != cabeza);
+        
+        if (!encontrado) {
+            cout << "El valor " << valor << " no existe en la lista.\n";
+        }
+    }
+};
+
+int main() {
+    ListaCircularDoble lista;
+    int opcion, valor;
+    
+    do {
+        cout << "\n=== MENU LISTA CIRCULAR DOBLE ===" << endl;
+        cout << "1. Insertar un dato" << endl;
+        cout << "2. Imprimir datos en la lista" << endl;
+        cout << "3. Imprimir el elemento siguiente" << endl;
+        cout << "4. Imprimir el elemento anterior" << endl;
+        cout << "5. Eliminar un elemento" << endl;
+        cout << "6. Buscar un elemento" << endl;
+        cout << "7. Salir" << endl;
+        cout << "Seleccione una opcion: ";
+        cin >> opcion;
+        
+        switch (opcion) {
+            case 1:
+                cout << "Ingrese el dato a insertar: ";
+                cin >> valor;
+                lista.insertar(valor);
+                break;
+                
+            case 2:
+                lista.imprimir();
+                break;
+                
+            case 3:
+                cout << "Ingrese el valor para buscar su siguiente: ";
+                cin >> valor;
+                lista.imprimirSiguiente(valor);
+                break;
+                
+            case 4:
+                cout << "Ingrese el valor para buscar su anterior: ";
+                cin >> valor;
+                lista.imprimirAnterior(valor);
+                break;
+                
+            case 5:
+                cout << "Ingrese el valor a eliminar: ";
+                cin >> valor;
+                lista.eliminar(valor);
+                break;
+                
+            case 6:
+                cout << "Ingrese el valor a buscar: ";
+                cin >> valor;
+                lista.buscar(valor);
+                break;
+                
+            case 7:
+                cout << "Saliendo del programa...\n";
+                break;
+                
+            default:
+                cout << "Opcion no valida. Intente de nuevo.\n";
+        }
+        
+    } while (opcion != 7);
+    
+    return 0;
+}
